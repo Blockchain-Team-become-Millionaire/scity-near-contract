@@ -1,0 +1,1 @@
+# scity-near-contract
