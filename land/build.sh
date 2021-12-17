@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-cd "`dirname $0`"
-source flags.sh
-cargo build --all --target wasm32-unknown-unknown --release
-cp target/wasm32-unknown-unknown/release/*.wasm ./res/contract.wasm
+
+RUSTFLAGS='-C link-arg=-s' cargo build --target wasm32-unknown-unknown --release
+mkdir -p ../../out
+cp target/wasm32-unknown-unknown/release/*.wasm ./res/main.wasm
