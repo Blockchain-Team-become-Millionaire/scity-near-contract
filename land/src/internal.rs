@@ -43,6 +43,22 @@ pub(crate) fn refund_deposit(storage_used: u64) {
     }
 }
 
+pub(crate) fn refund_deposit_buy_ticket(storage_used: u64, ticket_price: Balance) {
+    let required_cost = env::storage_byte_cost() * Balance::from(storage_used) + ticket_price;
+    let attached_deposit = env::attached_deposit();
+
+    assert!(
+        required_cost <= attached_deposit,
+        "Must attach {} yoctoNEAR to cover storage and payout ticket",
+        required_cost,
+    );
+
+    let refund = attached_deposit - required_cost;
+    if refund > 1 {
+        Promise::new(env::predecessor_account_id()).transfer(refund);
+    }
+}
+
 // TODO: need a way for end users to determine how much an approval will cost.
 pub(crate) fn bytes_for_approved_account_id(account_id: &AccountId) -> u64 {
     // The extra 4 bytes are coming from Borsh serialization to store the length of the string.
