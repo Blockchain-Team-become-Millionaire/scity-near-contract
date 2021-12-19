@@ -43,7 +43,7 @@ pub(crate) fn refund_deposit(storage_used: u64) {
     }
 }
 
-pub(crate) fn refund_deposit_buy_ticket(storage_used: u64, ticket_price: Balance) {
+pub(crate) fn refund_deposit_buy_land(storage_used: u64, ticket_price: Balance) {
     let required_cost = env::storage_byte_cost() * Balance::from(storage_used) + ticket_price;
     let attached_deposit = env::attached_deposit();
 

@@ -10,7 +10,7 @@ impl Contract {
         metadata: TokenMetadata,
         perpetual_royalties: Option<HashMap<AccountId, u32>>,
         receiver_id: Option<ValidAccountId>,
-        ticket_price: Balance,
+        land_price: Balance,
     ) {
         // self.assert_owner();
 
@@ -55,6 +55,6 @@ impl Contract {
         let required_storage_in_bytes =
             self.extra_storage_in_bytes_per_token + new_token_size_in_bytes;
 
-        refund_deposit_buy_ticket(required_storage_in_bytes, ticket_price);
+        refund_deposit_buy_land(required_storage_in_bytes, land_price);
     }
 }
