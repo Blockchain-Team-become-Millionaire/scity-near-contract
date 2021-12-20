@@ -131,6 +131,24 @@ impl Contract {
     fn on_tokens_burned(&mut self, account_id: AccountId, amount: Balance) {
         log!("Account @{} burned {}", account_id, amount);
     }
+
+    #[payable]
+    pub fn transfer_box_to_owner(
+        &mut self,
+        receiver_id: ValidAccountId,
+        amount: U128,
+        memo: Option<String>,
+    ) {
+        assert_eq!(
+            env::attached_deposit(),
+            1,
+            "Requires attached deposit of exactly 1 yoctoNEAR",
+        );
+        let sender_id = env::signer_account_id();
+        let amount: Balance = amount.into();
+        self.token
+            .internal_transfer(&sender_id, receiver_id.as_ref(), amount, memo);
+    }
 }
 
 near_contract_standards::impl_fungible_token_core!(Contract, token, on_tokens_burned);
