@@ -178,23 +178,26 @@ impl Contract {
                 env::block_timestamp()
             )
         );
-        // assert!(
-        //     env::block_timestamp() < area.close_time,
-        //     "This area has ended lands sales"
-        // );
-        // assert!(area.land_sold < area.limit, "All lands are sold out");
+        assert!(
+            env::block_timestamp() > area.close_time,
+            "This area has ended lands sales"
+        );
+        assert!(area.land_sold < area.limit, "All lands are sold out");
         assert!(
             env::attached_deposit() >= area.land_price + MINT_FEE,
             "Please deposit price equal land price + mint fee, excess mint fee will be refund !"
         );
 
-        let new_name = name.clone() + "#" + &area.land_sold.to_string();
+        let new_name = name.clone() + " #" + &area.land_sold.to_string();
         let token_id = hex::encode(&env::sha256(new_name.as_bytes()));
 
         let area_hash = hex::encode(&env::sha256(name.as_bytes()));
 
         area.land_sold += 1;
         self.area_metadata_by_id.insert(&area_hash, &area);
+
+        let mining_efficiency: u32 = 80 + ((env::block_timestamp() % 100) as u32);
+        let mining_power: u32 = 33 + ((env::block_timestamp() % 15) as u32) + ((area.land_sold % 15) as u32);
 
         let token: TokenMetadata = TokenMetadata {
             title: Some(String::from(new_name.clone())),
@@ -206,8 +209,8 @@ impl Contract {
             city: Some(name),
             location: Some(String::from("10, 20")),
             rare: Some(String::from("R")),
-            mining_efficiency: Some(1),
-            mining_power: Some(10),
+            mining_efficiency: Some(mining_efficiency),
+            mining_power: Some(mining_power),
         };
 
         self.nft_mint(
